@@ -13,7 +13,7 @@ class User extends Authenticatable
     protected $table = 'users'; 
 
     // Berdasarkan gambar, primary key kamu adalah id_user
-    protected $primaryKey = 'id_user'; 
+    //protected $primaryKey = 'id_user'; 
 
     public $timestamps = false;
     
@@ -24,7 +24,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'username',
-        'nama_lengkap',
+        'name',
         'email',
         'password',
         'role',
