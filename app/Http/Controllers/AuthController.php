@@ -76,6 +76,7 @@ class AuthController extends Controller
             'nama_lengkap' => 'required|string|max:100',
             'email'        => 'required|email|max:50|unique:users,email',
             'password'     => 'required|min:8|confirmed',
+            'role'         => 'nullable|in:superadmin,admin,penyewa'
         ], [
             'username.unique'     => 'Username sudah digunakan, cari yang lain.',
             'email.unique'        => 'Email sudah terdaftar.',
@@ -86,7 +87,7 @@ class AuthController extends Controller
         // Menyimpan data ke kolom database yang sesuai
         $user = User::create([
             'username'     => $request->username,
-            'name' => $request->nama_lengkap,
+            'name'         => $request->nama_lengkap,
             'email'        => $request->email,
             'password'     => Hash::make($request->password),
             'role'         => 'admin', // default role
