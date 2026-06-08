@@ -35,6 +35,7 @@ jobs:
       DB_USERNAME: root
       DB_PASSWORD: ""
       BCRYPT_ROUNDS: 4
+      APP_KEY: base64:fH75W54x3r9Z8jN2O0+314/yT1m/IqT2j83M1eY3h0k= # Tambahkan ini
       COMPOSER_PROCESS_TIMEOUT: 0
 
     steps:
