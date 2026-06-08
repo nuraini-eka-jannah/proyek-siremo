@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: nuraini-eka-jannah/proyek-siremo
 
   # ─── JOB 1: TESTING ───────────────────────────────────────
 jobs:
@@ -34,9 +34,11 @@ jobs:
       DB_DATABASE: testing_db
       DB_USERNAME: root
       DB_PASSWORD: ""
-      BCRYPT_ROUNDS: 4
+      BCRYPT_ROUNDS: 12
       APP_KEY: base64:fH75W54x3r9Z8jN2O0+314/yT1m/IqT2j83M1eY3h0k= # Tambahkan ini
       COMPOSER_PROCESS_TIMEOUT: 0
+      COMPOSER_NO_INTERACTION: 1
+      COMPOSER_NO_AUDIT: 1
 
     steps:
       - name: Checkout code
@@ -58,6 +60,12 @@ jobs:
         run: php artisan key:generate
 
       # --- TAMBAHKAN PERINTAH MIGRASI SEBELUM TEST ---
+      - name: Clear and Cache
+        run: |
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan config:cache
+
       - name: Run Migrations
         run: php artisan migrate --force
 
