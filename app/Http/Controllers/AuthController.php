@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -127,31 +128,39 @@ class AuthController extends Controller
     //API Register
     public function apiRegister(Request $request)
 {
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:6',
-        'no_telepon' => 'required',
-        'username' => 'required|unique:users',
-        // tambahkan validasi kolom lainnya
+    // 1. Gunakan Validator secara manual agar bisa mengembalikan JSON jika gagal
+    $validator = Validator::make($request->all(), [
+        'name'       => 'required|string|max:255',
+        'email'      => 'required|string|email|max:255|unique:users',
+        'password'   => 'required|string|min:6',
+        'no_telepon' => 'required|string',
+        'username'   => 'required|string|unique:users',
     ]);
 
+    // 2. Jika validasi gagal, kembalikan JSON dengan status 422 (Unprocessable Entity)
+    if ($validator->fails()) {
+        return response()->json([
+            'message' => 'Validasi gagal',
+            'errors'  => $validator->errors()
+        ], 422);
+    }
+
+    // 3. Simpan user
     $user = User::create([
-        
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password), // WAJIB di-hash!
+        'name'       => $request->name,
+        'email'      => $request->email,
+        'password'   => Hash::make($request->password),
         'no_telepon' => $request->no_telepon,
-        'username' => $request->username,
-        'role' => 'penyewa', // Default role
+        'username'   => $request->username,
+        'role'       => 'penyewa', 
     ]);
 
     $token = $user->createToken('auth_token')->plainTextToken;
 
     return response()->json([
-        'message' => 'Registrasi berhasil',
+        'message'      => 'Registrasi berhasil',
         'access_token' => $token,
-        'token_type' => 'Bearer',
+        'token_type'   => 'Bearer',
     ], 201);
 }
 
